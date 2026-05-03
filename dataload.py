@@ -67,9 +67,18 @@ cur=conn.cursor()
 
 insert_query = """
 INSERT INTO jobs_data(
-    job_title, country, experience_level, education_level, year,
-    salary, ai_risk_score, primary_skill, skill_demand_score,
-    job_openings, job_survival_class, salary_bucket, ai_risk_category
+    job_title, country, 
+    experience_level, 
+    education_level, 
+    year,
+    salary, 
+    ai_risk_score, 
+    primary_skill, 
+    skill_demand_score,
+    job_openings, 
+    job_survival_class, 
+    salary_bucket, 
+    ai_risk_category
 )
 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 """
