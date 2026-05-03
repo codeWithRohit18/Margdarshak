@@ -1,7 +1,8 @@
 import pandas as pd
+from db import get_db_connection
 
 # 1. Data Load
-df=pd.read_csv("Raw Dataset/Future of Jobs AI Datset Dirty.csv")
+df=pd.read_csv("Raw-Dataset/Future of Jobs AI Datset Dirty.csv")
 print(df.head(3))
 
 # Start For EDA(Exploratory Data Analysis)
@@ -59,8 +60,30 @@ df['salary'] = df['salary'].str.replace(r'[^0-9.]', '', regex=True)
 # Fix multiple dots (keep only first one)
 df['salary'] = df['salary'].str.replace(r'\.(?=.*\.)', '', regex=True)
 
+# MySql Data Insert Query
+
+conn=get_db_connection()
+cur=conn.cursor()
+
+insert_query = """
+INSERT INTO jobs_data(
+    job_title, country, experience_level, education_level, year,
+    salary, ai_risk_score, primary_skill, skill_demand_score,
+    job_openings, job_survival_class, salary_bucket, ai_risk_category
+)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+"""
+
+data = [tuple(row) for row in df.to_numpy()]
+
+cur.executemany(insert_query, data)
+conn.commit()
+
+cur.close()
+conn.close()
+
+print("✅ Data inserted successfully!")
+
 # Clean Data File 
 output="output/handelEDA.csv"
 df.to_csv(output,index=True)
-
-
