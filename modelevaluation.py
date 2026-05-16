@@ -7,7 +7,6 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import cross_val_score
-from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 
 # Load dataset
@@ -20,12 +19,14 @@ df = df.drop(columns=['Unnamed: 0'], errors='ignore')
 for col in df.select_dtypes(include='object').columns:
     df[col] = LabelEncoder().fit_transform(df[col])
 
-# Define input (X) and output (y)
+# Define X and y
 X = df.drop(columns=['ai_risk_category'])
 y = df['ai_risk_category']
 
-# Split data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2
+)
 
 # Train model
 model = RandomForestClassifier()
@@ -37,7 +38,7 @@ y_pred = model.predict(X_test)
 # Accuracy
 accuracy = accuracy_score(y_test, y_pred)
 
-# Precision (important line)
+# Precision
 precision = precision_score(y_test, y_pred, average='weighted')
 
 # Recall
@@ -46,26 +47,44 @@ recall = recall_score(y_test, y_pred, average='weighted')
 # F1 Score
 f1 = f1_score(y_test, y_pred, average='weighted')
 
-# confusion_matrix
+# Confusion Matrix
 cm = confusion_matrix(y_test, y_pred)
 
-# validation techniques
-model = RandomForestClassifier()
+print("\nConfusion Matrix:")
+print(cm)
+
+# Cross Validation
 scores = cross_val_score(model, X, y, cv=5)
 
-print("Accuracy:", accuracy)
+print("\nCross Validation Scores:")
+print(scores)
+
+print("\nAverage Accuracy:")
+print(scores.mean())
+
+# Metrics display
+print("\nAccuracy:", accuracy)
 print("Precision:", precision)
 print("Recall:", recall)
 print("F1 Score:", f1)
-print("Scores:", scores)
-print("Average Accuracy:", scores.mean())
 
-# Visualization
-# Your scores
+# Performance Graph
 metrics = ['Accuracy', 'Precision', 'Recall', 'F1']
 values = [accuracy, precision, recall, f1]
+
 plt.bar(metrics, values)
 plt.title("Model Performance")
 plt.ylabel("Score")
 plt.ylim(0, 1)
+plt.show()
+
+# Confusion Matrix Visualization
+plt.matshow(cm)
+
+plt.title("Confusion Matrix")
+plt.colorbar()
+
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+
 plt.show()
